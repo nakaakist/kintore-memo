@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Nariyuki Kintore & Memo",
   "scripts": {
-    "start": "node lambdas/backend/app.local.js",
+    "start": "node scripts/start.js",
     "local": "node scripts/local",
     "deploy": "node scripts/deploy.js",
     "deploy-front": "node scripts/deploy-front.js"
