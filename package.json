@@ -2,11 +2,11 @@
   "name": "kintore-memo",
   "version": "0.0.1",
   "description": "Nariyuki Kintore & Memo",
-  "main": "lambda.js",
   "scripts": {
-    "start": "node app.local.js",
-    "local": "node scripts/local",    
-    "deploy": "node scripts/deploy.js"
+    "start": "node lambdas/backend/app.local.js",
+    "local": "node scripts/local",
+    "deploy": "node scripts/deploy.js",
+    "deploy-front": "node scripts/deploy-front.js"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -14,6 +14,7 @@
     "body-parser": "^1.17.1",
     "compression": "^1.6.2",
     "cors": "^2.8.3",
+    "create-react-app": "^3.4.1",
     "express": "^4.15.2",
     "pug": "^2.0.4"
   }
