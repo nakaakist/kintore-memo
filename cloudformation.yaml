@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Kintore Memo app
 
+Parameters:
+  StaticAssetsS3BucketName:
+    Type: String
+
 Resources:
   ApiGatewayApi:
     Type: AWS::Serverless::Api
@@ -176,7 +180,59 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
+  StaticAssetsS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Ref StaticAssetsS3BucketName 
+
+  CloudFrontOriginAccessIdentity:
+    Type: "AWS::CloudFront::CloudFrontOriginAccessIdentity"
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "access-identity-${StaticAssetsS3Bucket}"
+
+  StaticAssetsS3BucketPolicy:
+    Type: "AWS::S3::BucketPolicy"
+    Properties:
+      Bucket: !Ref StaticAssetsS3Bucket
+      PolicyDocument:
+        Statement:
+          - Action: "s3:GetObject"
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${StaticAssetsS3Bucket}/*"
+            Principal:
+              AWS: !Sub >-
+                arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
+                ${CloudFrontOriginAccessIdentity}
+
+  CloudFrontDistribution:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 403
+            ResponsePagePath: '/index.html'        
+        PriceClass: PriceClass_All
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: true
+          TargetOriginId: !Sub "S3origin-${StaticAssetsS3BucketName}"
+          ViewerProtocolPolicy: redirect-to-https        
+        Origins:
+          - DomainName: !Sub "${StaticAssetsS3BucketName}.s3-${AWS::Region}.amazonaws.com"
+            Id: !Sub "S3origin-${StaticAssetsS3BucketName}"
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub >-
+                origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+        DefaultRootObject: index.html
+        Enabled: true
+
 Outputs:
+  WebSiteUrl:
+    Description: Cloudfront Website URL 
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    
   LambdaFunctionConsoleUrl:
     Description: Console URL for the Lambda Function.
     Value: !Join
