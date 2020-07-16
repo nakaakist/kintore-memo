@@ -1,17 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route } from "react-router-dom"
-import Home from './pages/Home'
+import { ThemeProvider } from '@material-ui/core/styles'
+import theme from './theme'
+import Dashboard from './pages/Dashboard'
 import NavBar from './components/NavBar'
+import Button from '@material-ui/core/Button'
+
 
 class App extends React.Component {
     render() {
         return (
-            <Router>              
-                <NavBar />
-                <Route exact path="/" component={Home} />
-                <Route exact path="/home" component={Home} />
-            </Router>
+            <ThemeProvider theme={theme}>
+                <Router>              
+                    <NavBar />
+                    <Route exact path="/" component={Dashboard} />
+                    <Route exact path="/dashboard" component={Dashboard} />
+                </Router>
+            </ThemeProvider>
         )
     }
 }
