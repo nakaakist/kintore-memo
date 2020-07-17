@@ -5,7 +5,6 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import theme from './theme'
 import Dashboard from './pages/Dashboard'
 import NavBar from './components/NavBar'
-import Button from '@material-ui/core/Button'
 
 
 class App extends React.Component {

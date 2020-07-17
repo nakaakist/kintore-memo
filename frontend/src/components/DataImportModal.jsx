@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Modal, Button, Typography, Divider, Grid, Chip } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import DataFrame from 'dataframe-js'
+import { StrongStore } from '../services/store'
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -41,7 +42,8 @@ export const DataImportModal = () => {
         event.preventDefault()
         if (selectedData) {
             const df = await DataFrame.fromCSV(selectedData).then(df => df)
-            window.localStorage.setItem('data', JSON.stringify(df))
+            window.localStorage.setItem('strongData', JSON.stringify(df))
+            StrongStore.setData(df)
             setDataImportModalOpen(false)
             setSelectedData(null)
         }
